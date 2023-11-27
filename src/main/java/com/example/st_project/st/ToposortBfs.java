@@ -1,6 +1,8 @@
 package com.example.st_project.st;
 
 import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ToposortBfs {
     // Function to return list containing vertices in Topological order.
@@ -41,24 +43,24 @@ public class ToposortBfs {
     }
 }
 
- class tUfff {
-    public static void main(String[] args) {
-        int V = 6;
-        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-        for (int i = 0; i < V; i++) {
-            adj.add(new ArrayList<>());
-        }
-        adj.get(2).add(3);
-        adj.get(3).add(1);
-        adj.get(4).add(0);
-        adj.get(4).add(1);
-        adj.get(5).add(0);
-        adj.get(5).add(2);
-
-        int[] ans = ToposortBfs.topoSort(V, adj);
-        for (int node : ans) {
-            System.out.print(node + " ");
-        }
-        System.out.println("");
-    }
-}
+// class tUfff {
+//    public static void main(String[] args) {
+//        int V = 6;
+//        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+//        for (int i = 0; i < V; i++) {
+//            adj.add(new ArrayList<>());
+//        }
+//        adj.get(2).add(3);
+//        adj.get(3).add(1);
+//        adj.get(4).add(0);
+//        adj.get(4).add(1);
+//        adj.get(5).add(0);
+//        adj.get(5).add(2);
+//
+//        int[] ans = ToposortBfs.topoSort(V, adj);
+//        for (int node : ans) {
+//            System.out.print(node + " ");
+//        }
+//        System.out.println("");
+//    }
+//}

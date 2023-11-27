@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.st_project.st.lcs.findLCS;
 import static org.junit.Assert.*;
 
 @SpringBootTest
@@ -463,9 +464,172 @@ class StApplicationTests {
 	@Test
 	void segmentTreeTest()
 	{
+		int[] nums = {1, 3, 5, 7, 9, 11};
+		SegmentTree segmentTree = new SegmentTree(nums);
+
+		// Query the sum of elements in the range [1, 3]
+		int sum = segmentTree.query(1, 3);
+		assertEquals(15,sum);
+
+		// Update the value at index 2 to 6
+		segmentTree.update(2, 6);
+
+		// Query the sum of elements in the range [1, 3] after the update
+		sum = segmentTree.query(1, 3);
+		assertEquals(16, sum);
+//		SegmentTree segmentTree = new SegmentTree();
 
 
 	}
+
+//	@Test
+//	void TreapTest()
+//	{
+////		6 6 6 7 7 6 6
+////3 3 5 4 7 6 7
+//		Treap treap = new Treap();
+//		int n = 7;
+//		long b[] = {6,6,6,7,7,6,6};
+//		long r[] = {3,3,5,4,7,6,7};
+//		String s = "0100010";
+//		long ans = treap.solve(n,r,b,s);
+//		long exp = 45 ;
+//		assertEquals(exp,ans);
+//	}
+	@Test
+	void BinarySearchTest()
+	{
+		int[] arr = {0,1,2,3,4,5};
+		int target = 5;
+		BinarySearch binarySearch = new BinarySearch();
+		assertEquals(5,binarySearch.binarySearch(arr,5));
+	}
+	@Test
+	void BinarySearchTest2()
+	{
+		int[] arr = {0,1,2,3,4,5};
+		int target = -1;
+		BinarySearch binarySearch = new BinarySearch();
+		assertEquals(-1,binarySearch.binarySearch(arr,target));
+	}
+
+	@Test
+	void KmpTest()
+	{
+		String text = "ABABDABACDABABCABAB";
+		String pattern = "ABABCABAB";
+		kmp k = new kmp();
+		Boolean b = kmp.search(text,pattern);
+		assertEquals(true,b);
+	}
+	@Test
+	void KmpTest2()
+	{
+		String text = "ABABDABACDABABCABAB";
+		String pattern = "BBBBBB";
+		kmp k = new kmp();
+		Boolean b = kmp.search(text,pattern);
+		assertEquals(false,b);
+	}
+	@Test
+	void KmpTest3()
+	{
+		String text = "ABABDABACDABABCABAB";
+		String pattern = "BBBBBB";
+		kmp k = new kmp();
+		Boolean b = kmp.search(text,pattern);
+		assertEquals(false,b);
+	}
+	@Test
+	void EditDistanceTest()
+	{
+		EditDistance editDistance = new EditDistance();
+		String word1 = "intention";
+		String word2 = "execution";
+		int b = editDistance.calculateEditDistance(word1,word2);
+
+		assertEquals(5,b);
+
+	}
+	@Test
+	void LinkedListTest()
+	{
+		LinkedList<Number> list = new LinkedList<Number>();
+        list.insert(1);
+        list.insert(2);
+        list.insert(3);
+        ArrayList<Integer> dlist = list.display();
+		ArrayList<Integer> arrayList = new ArrayList<>(){{add(3);
+		add(2);
+		add(1);
+		}};
+		assertEquals(arrayList.toArray(),dlist.toArray());
+	}
+	@Test
+	void RobinKarpTest()
+	{
+		String text = "ABABDABACDABABCABAB";
+		String pattern = "ABABCABAB";
+		RabinKarpStringMatching rabinKarpStringMatching = new RabinKarpStringMatching();
+		boolean b = rabinKarpStringMatching.search(text,pattern);
+		assertEquals(true,b);
+	}
+	@Test
+	void RobinKarpTest2()
+	{
+		String text = "ABABDABACDABABCABAB";
+		String pattern = "E";
+		RabinKarpStringMatching rabinKarpStringMatching = new RabinKarpStringMatching();
+		boolean b = rabinKarpStringMatching.search(text,pattern);
+		assertEquals(false,b);
+	}
+	@Test
+	void fenwickTreeTest()
+	{
+		FenwickTree fenwickTree = new FenwickTree(8);
+		int[] array = {1, 3, 5, 2, 7, 6, 4, 8};
+		ArrayList<Integer> arrayList = fenwickTree.solve(array);
+		ArrayList<Integer> resList = new ArrayList<>();
+		resList.add(9);
+		resList.add(24);
+		resList.add(36);
+		resList.add(20);
+		assertArrayEquals(resList.toArray(),arrayList.toArray());
+
+	}
+	@Test
+	void lcsTest()
+	{
+		String str1 = "ABCBDAB";
+        String str2 = "BDCAB";
+		lcs l = new lcs();
+        String lcs = l.findLCS(str1, str2);
+        assertEquals("BDAB",lcs);
+	}
+	@Test
+	void lcsTest2()
+	{
+		String str1 = "ABCBDAB";
+		String str2 = "EASBAECBDAB";
+		lcs l = new lcs();
+		String lcs = l.findLCS(str1, str2);
+		assertEquals("ABCBDAB",lcs);
+	}
+
+	@Test
+	void lcsTest3()
+	{
+		String str1 = "vishnutha";
+		String str2 = "vishnu";
+		lcs l = new lcs();
+		String lcs = l.findLCS(str1, str2);
+		assertEquals("vishnu",lcs);
+	}
+
+
+
+
+
 
 
 

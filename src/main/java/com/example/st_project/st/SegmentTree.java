@@ -1,176 +1,90 @@
 package com.example.st_project.st;
 
-import java.io.*;
-import java.util.*;
-
 public class SegmentTree {
+    private int[] tree;
+    private int[] nums;
+    private int n;
 
-    static class Node {
-        long sum;
-        int mx, mn;
-        long andd;
+    public SegmentTree(int[] nums) {
+        this.nums = nums;
+        this.n = nums.length;
+        // The size of the segment tree should be 2 * 2^ceil(log2(n)) - 1
+        int treeSize = 2 * (int) Math.pow(2, Math.ceil(Math.log(n) / Math.log(2))) - 1;
+        this.tree = new int[treeSize];
+        buildTree(0, 0, n - 1);
+    }
 
-        Node() {
-            sum = 0;
-            mx = -MX;
-            mn = MX;
-            andd = (1L << 32) - 1;
-        }
-
-        Node(int val) {
-            sum = val;
-            mx = val;
-            mn = val;
-            andd = val;
-        }
-
-        void merge(Node left, Node right) {
-            sum = left.sum + right.sum;
-            mx = Math.max(left.mx, right.mx);
-            mn = Math.min(left.mn, right.mn);
-            andd = left.andd & right.andd;
+    private void buildTree(int node, int start, int end) {
+        if (start == end) {
+            // Leaf node, store the value of the array element
+            tree[node] = nums[start];
+        } else {
+            int mid = start + (end - start) / 2;
+            // Recursively build the left and right subtrees
+            buildTree(2 * node + 1, start, mid);
+            buildTree(2 * node + 2, mid + 1, end);
+            // Update the value of the current node based on the left and right subtrees
+            tree[node] = tree[2 * node + 1] + tree[2 * node + 2];
         }
     }
 
-    static class Update {
-        int val;
-
-        Update() {
-            val = 0;
-        }
-
-        Update(int v) {
-            val = v;
-        }
-
-        void apply(Node node) {
-            node.sum = val;
-            node.mn = val;
-            node.mx = val;
-            node.andd = val;
-        }
+    public int query(int left, int right) {
+        return query(0, 0, n - 1, left, right);
     }
 
-    static class Segment_Tree<T> {
-
-        private int size = 0;
-        private Node[] seg;
-
-        Segment_Tree() {
-
+    private int query(int node, int start, int end, int left, int right) {
+        // Case 1: No overlap
+        if (right < start || left > end) {
+            return 0;
         }
-
-        Segment_Tree(int n) {
-            size = n;
-            seg = new Node[4 * size + 1];
-            for (int i = 0; i < seg.length; i++) {
-                seg[i] = new Node();
-            }
+        // Case 2: Complete overlap
+        if (left <= start && right >= end) {
+            return tree[node];
         }
-
-        Segment_Tree(List<T> arr) {
-            size = arr.size();
-            seg = new Node[4 * size + 1];
-            for (int i = 0; i < seg.length; i++) {
-                seg[i] = new Node();
-            }
-            build(arr);
-        }
-
-        private void build(int start, int end, int ind, List<T> arr) {
-            if (start == end) {
-                seg[ind] = new Node((int) arr.get(start));
-                return;
-            }
-            int mid = (start + end) / 2;
-            int leftInd = 2 * ind + 1, rightInd = 2 * ind + 2;
-            build(start, mid, leftInd, arr);
-            build(mid + 1, end, rightInd, arr);
-            seg[ind].merge(seg[leftInd], seg[rightInd]);
-        }
-
-        void build(List<T> arr) {
-            build(0, size - 1, 0, arr);
-        }
-
-        private Node query(int start, int end, int ind, int left, int right) {
-            if (start > right || end < left) {
-                return new Node();
-            }
-            if (start >= left && end <= right) {
-                return seg[ind];
-            }
-            int mid = (start + end) / 2;
-            int leftInd = 2 * ind + 1, rightInd = 2 * ind + 2;
-            Node res = new Node();
-            Node leftItem = query(start, mid, leftInd, left, right);
-            Node rightItem = query(mid + 1, end, rightInd, left, right);
-            res.merge(leftItem, rightItem);
-            return res;
-        }
-
-        Node query(int left, int right) {
-            return query(0, size - 1, 0, left, right);
-        }
-
-        private void update(int start, int end, int ind, int index, Update u) {
-            if (start == end) {
-                u.apply(seg[ind]);
-                return;
-            }
-            int mid = (start + end) / 2;
-            int leftInd = 2 * ind + 1, rightInd = 2 * ind + 2;
-            if (index <= mid) update(start, mid, leftInd, index, u);
-            else update(mid + 1, end, rightInd, index, u);
-            seg[ind].merge(seg[leftInd], seg[rightInd]);
-        }
-
-        void update(int index, int value) {
-            Update u = new Update(value);
-            update(0, size - 1, 0, index, u);
-        }
+        // Case 3: Partial overlap
+        int mid = start + (end - start) / 2;
+        int leftSum = query(2 * node + 1, start, mid, left, right);
+        int rightSum = query(2 * node + 2, mid + 1, end, left, right);
+        return leftSum + rightSum;
     }
 
-    static final int MX = (int) 1e9;
-
-    static ArrayList<Integer> solve(int n , int q, Long [] a, int l[] , int limits[]) {
-
-        List<Long> arr = new ArrayList<>(Arrays.asList(a));
-        Segment_Tree<Long> sg = new Segment_Tree<>(arr);
-        ArrayList<Integer> ansList = new ArrayList<>();
-        int i = 0;
-        while (i++ < q) {
-            int left = l[i];
-            int limit = limits[i];
-            left--;
-
-            int start = left, end = n - 1;
-            int ans = -1;
-
-            while (start <= end) {
-                int mid = (start + end) / 2;
-                long andd = sg.query(left, mid).andd;
-                boolean check = andd >= limit;
-                if (check) {
-                    ans = mid;
-                    start = mid + 1;
-                } else
-                    end = mid - 1;
-            }
-            ansList.add( (ans == -1 )? -1 : ans + 1);
-
-        }
-        return ansList;
+    public void update(int index, int newValue) {
+        update(0, 0, n - 1, index, newValue);
     }
 
-//    public static void main(String[] args) throws IOException {
-//
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//
-//        int t = Integer.parseInt(reader.readLine().trim());
-//
-//        for (int _t = 1; _t <= t; _t++) {
-//            solve();
-//        }
-//    }
+    private void update(int node, int start, int end, int index, int newValue) {
+        // If the update index is out of the current node's range, return
+        if (index < start || index > end) {
+            return;
+        }
+        // If the current node is a leaf node, update its value
+        if (start == end) {
+            tree[node] = newValue;
+        } else {
+            int mid = start + (end - start) / 2;
+            // Recursively update the left or right subtree
+            update(2 * node + 1, start, mid, index, newValue);
+            update(2 * node + 2, mid + 1, end, index, newValue);
+            // Update the value of the current node based on the left and right subtrees
+            tree[node] = tree[2 * node + 1] + tree[2 * node + 2];
+        }
+    }
 }
+
+//class Main {
+//    public static void main(String[] args) {
+//        int[] nums = {1, 3, 5, 7, 9, 11};
+//        SegmentTree segmentTree = new SegmentTree(nums);
+//
+//        // Query the sum of elements in the range [1, 3]
+//        int sum = segmentTree.query(1, 3);
+//        System.out.println("Sum in the range [1, 3]: " + sum);
+//
+//        // Update the value at index 2 to 6
+//        segmentTree.update(2, 6);
+//
+//        // Query the sum of elements in the range [1, 3] after the update
+//        sum = segmentTree.query(1, 3);
+//        System.out.println("Sum in the range [1, 3] after update: " + sum);
+//    }
+//}
